@@ -1,29 +1,99 @@
+:root {
+  --bg-start: #0f172a;
+  --bg-end: #1e293b;
+  --text: #f8fafc;
+  --muted: #cbd5e1;
+  --card: rgba(15, 23, 42, 0.72);
+  --card-border: rgba(148, 163, 184, 0.32);
+  --accent: #38bdf8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  background-color: #3bc3ad;
+  margin: 0;
+  min-height: 100vh;
+  font-family: Inter, "Avenir Next", "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at top left, #2563eb 0%, var(--bg-start) 38%, var(--bg-end) 100%);
 }
 
-a {
+.landing-shell {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.hero {
+  text-align: center;
+  margin: 1rem auto 2rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 2.6rem);
+  line-height: 1.2;
+}
+
+.subtitle {
+  margin: 0.9rem auto 0;
+  max-width: 640px;
+  color: var(--muted);
+}
+
+.room-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+a.chat-link {
   text-decoration: none;
-  color: white;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.2rem;
+  border-radius: 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 20px 40px rgba(2, 8, 23, 0.35);
+  transition: transform 0.18s ease, border-color 0.18s ease;
 }
 
-a:visited {
-  text-decoration: none;
+a.chat-link:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
 }
 
-.chat-link {
-  padding: 2em;
-  display: inline-block;
-  border: 5px solid #1387b1;
-  border-radius: 1em;
-  background-color: #225daa;
-  margin-top: 5em;
+.room-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(56, 189, 248, 0.22);
+  color: var(--accent);
 }
 
-#general-chat-link {
-  margin-left: 7em;
+.room-title {
+  font-size: 1.1rem;
+  font-weight: 700;
 }
 
-#videogames-chat-link {
-  margin-left: 2em;
+.room-description {
+  color: var(--muted);
+  line-height: 1.4;
+  font-size: 0.95rem;
 }

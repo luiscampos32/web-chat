@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title> Real Time Chat </title>
+    <title>Real Time Chat</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pure/0.6.2/pure-min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
@@ -8,18 +8,28 @@
     <link rel="stylesheet" href="landing.css" />
   </head>
   <body>
-    <a href="/general" id="general-chat-link">
-      <div class="chat-link">
-        Go to General Chat
-      </div>
-    </a>
-    <a href="/videogames" id="videogames-chat-link">
-      <div class="chat-link">
-        Go to Video Games Chat
-      </div>
-    </a>
+    <main class="landing-shell">
+      <section class="hero">
+        <p class="eyebrow">Multi-Room Chat</p>
+        <h1>Jump into a room and start talking in real time.</h1>
+        <p class="subtitle">Simple, fast, and focused group chat for different interests.</p>
+      </section>
+
+      <section class="room-grid" aria-label="Available chat rooms">
+        <a href="/general" id="general-chat-link" class="chat-link">
+          <span class="room-icon"><i class="fa fa-comments" aria-hidden="true"></i></span>
+          <span class="room-title">General Chat</span>
+          <span class="room-description">For everything from quick hellos to day-to-day conversation.</span>
+        </a>
+
+        <a href="/videogames" id="videogames-chat-link" class="chat-link">
+          <span class="room-icon"><i class="fa fa-gamepad" aria-hidden="true"></i></span>
+          <span class="room-title">Video Games</span>
+          <span class="room-description">Talk launches, updates, builds, esports, and favorite titles.</span>
+        </a>
+      </section>
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-
   </body>
 </html>

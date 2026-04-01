@@ -13,7 +13,7 @@ body {
   width: 100%;
   height: 85%;
   margin: 0;
-  overflow; auto;
+  overflow: auto;
   padding: 0;
   background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 800, color-stop(0%, #2d5986), color-stop(800%, #1f4060));
   background: radial-gradient(circle, #2d5986, #1f4060);

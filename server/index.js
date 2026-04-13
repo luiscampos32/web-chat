@@ -1,139 +1,43 @@
-/*
-var express = require('express');
-var app = express();
-var server = require('http').createServer(app);
-var io = require('socket.io')(server);
-var randomcolor = require('randomcolor');
-
-var clients = [];
-var usersOnline = [];
-
-// set listening port for local testing
-app.set('port', (process.env.PORT || 5000));
-
-// send html file when user visits url
-app.get('/', function(req, res, next) {
-  res.sendFile(__dirname + '../client/public/landing.html')
-});
-
-app.get('/general', function(req, res, next) {
-  res.sendFile(__dirname + '../client/public/general.html')
-});
-
-app.get('/videogames', function(req, res, next) {
-  res.sendFile(__dirname + '../client/public/videogames.html')
-});
-
-// set public folder for stylesheets
-app.use(express.static(__dirname + '../client/public'));
-
-io.on('connection', function(client) {
-  console.log('Client connected....');
-
-  client.on('room', function(data) {
-    var color = randomcolor.randomColor();
-    client.user = data['nickname'];
-    client.join(data['room']);
-    var rm = data['room'];
-    console.log(client.id);
-    var temp = {name: data['nickname'], id: client.id, room: rm};
-    usersOnline.push(temp);
-    // list with socket ids and length of clients in the room
-    //console.log(io.sockets.adapter.rooms['general']);
-    // output socket info of clients in the room
-    //console.log(io.sockets.in('general'));
-    // output user nickname in the room
-    console.log(io.sockets.in(rm).connected[client.id].user);
-
-    io.sockets.in(data['room']).emit('joined', {
-      'roomUsers': io.sockets.adapter.rooms[rm].sockets,
-      'color': color,
-      'username': data['nickname'],
-      'usersOnline': usersOnline
-    });
-    /*
-    var color = randomcolor.randomColor();
-    client.user = data['nickname'];
-    clients.push(data['nickname']);
-    client.emit('joined', {
-      'clients': clients,
-      'username': data['nickname'],
-      'color': color
-    });
-    client.broadcast.emit('joined', {
-      'clients': clients,
-      'username': username,
-      'color': color
-    });
-    
-  });
-
-  client.on('messages', function(data) {
-    io.sockets.in(data['room']).emit('thread', {
-      'message': data['message'],
-      'nickname': data['nickname'],
-      'color': data['color']
-    });
-    /*
-    client.emit('thread', {
-      'message': data['message'],
-      'nickname': data['nickname'],
-      'color': data['color']
-    });
-    client.broadcast.emit('thread', {
-      'message': data['message'],
-      'nickname': data['nickname'],
-      'color': data['color']
-    });
-    
-  });
-
-  client.on('disconnect', function() {
-    console.log(usersOnline);
-    for(var i = 0; i < usersOnline.length; i++) {
-      if(usersOnline[i]["id"] == client.id) {
-        var rm = usersOnline[i]["room"];
-        console.log(rm);
-        usersOnline.splice(usersOnline.indexOf(client.user), 1);
-        console.log(usersOnline);
-      }
-    }
-    client.leave(rm);
-    if(io.sockets.adapter.rooms[rm] === undefined) {
-      var roomUsers = [];
-    }
-    else {
-      var roomUsers = io.sockets.adapter.rooms[rm].sockets;
-    }
-    io.sockets.in(rm).emit('updateList', {
-      'roomUsers': roomUsers,
-      'usersOnline': usersOnline
-    });
-    /*
-    client.emit('updateList', clients);
-    client.broadcast.emit('updateList', clients);
-    
-  });
-
-});
-
-server.listen(app.get('port'), function() {
-  console.log('Node app is running on port', app.get('port'));
-});
-*/
-
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
-const jwt = require('jsonwebtoken');
-
+//const jwt = require('jsonwebtoken');
+const cors = require('cors');
 const app = express();
+const { createClient } = require('@supabase/supabase-client');
+const supabaseUrl = 'https://whrjepftvicljasjmwjq.supabase.co'
+const supabaseKey = 'sb_publishable_7zGUsb7vnGMh6eQPLQr17w_HZfc5V8B'
+const supabase = createClient(supabaseUrl, supabaseKey)
+
+app.use(cors());
+
 const server = http.createServer(app);
+
 const io = new Server(server, {
-  cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] }
+  cors: { 
+    origin: 'http://localhost:5173', // Your Vite dev server URL
+    methods: ['GET', 'POST'],
+  },
+});
+
+// In-memory tracking for online users
+const onlineUsers = {};
+
+io.on('connection', (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  // Listen for a message from a client
+  socket.on('send_message', (data) => {
+    // Broadcast that message to everyone connected
+    io.emit('receive_message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User Disconnected', socket.id);
+  });
 });
 
 
-server.listen(5000, () => {
-  console.log('Server running on port 5000');
+server.listen(3001, () => {
+  console.log('Server running on port 3001');
 });

@@ -1,3 +1,4 @@
+/*
 var express = require('express');
 var app = express();
 var server = require('http').createServer(app);
@@ -12,19 +13,19 @@ app.set('port', (process.env.PORT || 5000));
 
 // send html file when user visits url
 app.get('/', function(req, res, next) {
-  res.sendFile(__dirname + '/public/landing.html')
+  res.sendFile(__dirname + '../client/public/landing.html')
 });
 
 app.get('/general', function(req, res, next) {
-  res.sendFile(__dirname + '/public/general.html')
+  res.sendFile(__dirname + '../client/public/general.html')
 });
 
 app.get('/videogames', function(req, res, next) {
-  res.sendFile(__dirname + '/public/videogames.html')
+  res.sendFile(__dirname + '../client/public/videogames.html')
 });
 
 // set public folder for stylesheets
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '../client/public'));
 
 io.on('connection', function(client) {
   console.log('Client connected....');
@@ -64,7 +65,7 @@ io.on('connection', function(client) {
       'username': username,
       'color': color
     });
-    */
+    
   });
 
   client.on('messages', function(data) {
@@ -84,7 +85,7 @@ io.on('connection', function(client) {
       'nickname': data['nickname'],
       'color': data['color']
     });
-    */
+    
   });
 
   client.on('disconnect', function() {
@@ -111,11 +112,28 @@ io.on('connection', function(client) {
     /*
     client.emit('updateList', clients);
     client.broadcast.emit('updateList', clients);
-    */
+    
   });
 
 });
 
 server.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
+});
+*/
+
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: 'http://localhost:3000', methods: ['GET', 'POST'] }
+});
+
+
+server.listen(5000, () => {
+  console.log('Server running on port 5000');
 });

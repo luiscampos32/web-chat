@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import io from 'socket.io-client';
 
@@ -9,6 +9,8 @@ export default function ChatRoom({ username }) {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [users, setUsers] = useState([]);
+  const [typingUsers, setTypingUsers] = useState([]);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     socket.emit('join_room', { roomSlug, username });
@@ -16,25 +18,45 @@ export default function ChatRoom({ username }) {
     socket.on('message_history', (history) => setMessages(history));
     socket.on('receive_message', (msg) => setMessages((prev) => [...prev, msg]));
     socket.on('user_list', (userList) => setUsers(userList));
+    socket.on('typing_update', (typingList) => setTypingUsers(typingList || []));
 
     return () => {
+      socket.emit('leave_room', { roomSlug });
       socket.off('message_history');
       socket.off('receive_message');
       socket.off('user_list');
+      socket.off('typing_update');
+      clearTimeout(typingTimeoutRef.current);
     };
   }, [roomSlug, username]);
+
+  const notifyTyping = (nextValue) => {
+    if (nextValue.trim()) {
+      socket.emit('typing_start', { roomSlug, username });
+
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(() => {
+        socket.emit('typing_stop', { roomSlug, username });
+      }, 900);
+    } else {
+      clearTimeout(typingTimeoutRef.current);
+      socket.emit('typing_stop', { roomSlug, username });
+    }
+  };
 
   const sendMsg = (e) => {
     e.preventDefault();
     if (message.trim()) {
       socket.emit('send_message', { roomSlug, username, content: message.trim() });
+      socket.emit('typing_stop', { roomSlug, username });
+      clearTimeout(typingTimeoutRef.current);
       setMessage('');
     }
   };
 
-  const typingUsers = useMemo(
-    () => (message.trim() ? [`${username} is typing`] : []),
-    [message, username],
+  const visibleTypingUsers = useMemo(
+    () => typingUsers.filter((typingUser) => typingUser !== username),
+    [typingUsers, username],
   );
 
   return (
@@ -81,9 +103,9 @@ export default function ChatRoom({ username }) {
         </div>
 
         <div className="typing-wrap" aria-live="polite">
-          {typingUsers.map((t) => (
-            <div key={t} className="typing-pill">
-              <span>{t}</span>
+          {visibleTypingUsers.map((typingUser) => (
+            <div key={typingUser} className="typing-pill">
+              <span>{typingUser} is typing</span>
               <span className="typing-dots" aria-hidden="true">
                 <i />
                 <i />
@@ -96,7 +118,11 @@ export default function ChatRoom({ username }) {
         <form onSubmit={sendMsg} className="chat-form">
           <input
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => {
+              const nextValue = e.target.value;
+              setMessage(nextValue);
+              notifyTyping(nextValue);
+            }}
             placeholder={`Message #${roomSlug}`}
           />
           <button type="submit">Send</button>

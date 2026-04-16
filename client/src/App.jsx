@@ -1,62 +1,28 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import './App.css'
+import { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './components/LandingPage';
+import ExplorePage from './components/ExplorePage';
+import ChatRoom from './components/ChatRoom';
 
-// Connect to the backend port
-const socket = io('http://localhost:3001');
+export default function App() {
+  const [username, setUsername] = useState("");
 
-function App() {
-  const [message, setMessage] = useState("");
-  const [messageList, setMessageList] = useState([]);
-
-  const sendMessage = () => {
-    if (message !== "") {
-      const messageData = {
-        text: message, 
-        time: new Date().toLocaleTimeString(),
-      };
-      socket.emit('send_message', messageData);
-      setMessage(''); // Clear input
-    }
-  };
-
-  useEffect(() => {
-    // Listen for messages from the server
-    socket.on('receive_message', (data) => {
-      setMessageList((list) => [...list, data]);
-    });
-
-    // Cleanup: remove the listener when component unmounts
-    return () => socket.off('receive_message');
-  }, []);
+  // If no username is set, only show the Landing Page
+  if (!username) {
+    return <LandingPage setUsername={setUsername} />;
+  }
 
   return (
-    <>
-      <section id="center">
-        <div className="App">
-          <h3>Live Chat</h3>
-          <div className="chat-window">
-            {messageList.map((msg, index) => (
-              <p key={index}>{msg.text}<span>{msg.time}</span></p>
-            ))}
-          </div>
-          <input
-            type="text"
-            placeholder="Message..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendMessage}>Send</button>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+    <Router>
+      <div style={{ padding: '10px', background: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
+        <span>Chatting as: <strong>{username}</strong></span>
+        <button onClick={() => setUsername("")} style={{ cursor: 'pointer' }}>Change Name</button>
+      </div>
+      <Routes>
+        <Route path="/" element={<Navigate to="/explore" />} />
+        <Route path="/explore" element={<ExplorePage />} />
+        <Route path="/chat/:roomSlug" element={<ChatRoom username={username} />} />
+      </Routes>
+    </Router>
   );
 }
-
-export default App;

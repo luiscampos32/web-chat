@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const socket = io.connect('http://localhost:3001');
+const socket = io.connect(import.meta.env.VITE_SOCKET_URL);
 
 export default function ChatRoom({ username }) {
   const { roomSlug } = useParams();

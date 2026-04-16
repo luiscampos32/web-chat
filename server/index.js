@@ -12,7 +12,7 @@ const server = http.createServer(app);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const io = new Server(server, {
-  cors: { origin: 'http://localhost:5173', methods: ['GET', 'POST'] },
+  cors: { origin: process.env.CLIENT_ORIGIN, methods: ['GET', 'POST'] },
 });
 
 const onlineUsers = {}; // { socketId: { username, roomSlug } }
@@ -117,4 +117,5 @@ io.on('connection', (socket) => {
   });
 });
 
-server.listen(3001, () => console.log('🚀 Server running on port 3001'));
+const PORT = process.env.PORT || 3001;
+server.listen(PORT, () => console.log('🚀 Server running on port 3001'));

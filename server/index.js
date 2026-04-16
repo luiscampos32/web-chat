@@ -6,13 +6,58 @@ const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-app.use(cors());
+
+const allowedOrigins = (process.env.CLIENT_ORIGIN || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+const allowVercelPreviews = process.env.ALLOW_VERCEL_PREVIEWS === 'true';
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  if (allowedOrigins.includes(origin)) {
+    return true;
+  }
+
+  if (allowVercelPreviews && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin)) {
+    return true;
+  }
+
+  return false;
+};
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked for origin: ${origin}`));
+    },
+    credentials: true,
+  }),
+);
 
 const server = http.createServer(app);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 const io = new Server(server, {
-  cors: { origin: process.env.CLIENT_ORIGIN, methods: ['GET', 'POST'] },
+  cors: {
+    origin: (origin, callback) => {
+      if (isAllowedOrigin(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`Socket CORS blocked for origin: ${origin}`));
+    },
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
 });
 
 const onlineUsers = {}; // { socketId: { username, roomSlug } }
@@ -118,4 +163,4 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => console.log('🚀 Server running on port 3001'));
+server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

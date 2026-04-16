@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import io from 'socket.io-client';
 
-const socket = io.connect(import.meta.env.VITE_SOCKET_URL);
+const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3001';
+
+const socket = io(socketUrl, {
+  withCredentials: true,
+  transports: ['websocket', 'polling'],
+  autoConnect: true,
+  reconnection: true,
+});
 
 export default function ChatRoom({ username }) {
   const { roomSlug } = useParams();

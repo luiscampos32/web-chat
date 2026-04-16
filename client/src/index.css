@@ -171,6 +171,63 @@ button:hover,
 .explore__header p {
   color: var(--muted);
   margin: 0;
+  color: #fff;
+}
+
+.room-card p {
+  color: var(--muted);
+  min-height: 46px;
+}
+
+.room-card a,
+.chat-exit {
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.chat-layout {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.chat-sidebar {
+  padding: 16px;
+}
+
+.chat-sidebar h4 {
+  margin: 14px 0 10px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.user-list {
+  display: grid;
+  gap: 8px;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 10px rgba(32, 216, 146, 0.7);
+}
+
+.chat-main {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
 }
 
 .landing__form {

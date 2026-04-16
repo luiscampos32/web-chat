@@ -10,21 +10,27 @@ export default function ExplorePage() {
       const { data } = await supabase.from('rooms').select('*');
       setRooms(data || []);
     };
+
     fetchRooms();
   }, []);
 
   return (
-    <div style={{ padding: '40px' }}>
-      <h1>Public Chatrooms</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '20px' }}>
-        {rooms.map(room => (
-          <div key={room.id} style={{ border: '1px solid #ddd', padding: '20px', borderRadius: '10px', boxShadow: '0 2px 5px rgba(0,0,0,0.1)' }}>
+    <section className="explore page-enter">
+      <div className="explore__header">
+        <p className="landing__eyebrow">Discover channels</p>
+        <h1>Public Chatrooms</h1>
+        <p>Pick a room and start discussing with whoever is online.</p>
+      </div>
+
+      <div className="room-grid">
+        {rooms.map((room, index) => (
+          <article key={room.id} className="room-card glass-panel" style={{ animationDelay: `${index * 80}ms` }}>
             <h3>{room.name}</h3>
-            <p style={{ color: '#666' }}>{room.description}</p>
-            <Link to={`/chat/${room.slug}`} style={{ color: '#007bff', fontWeight: 'bold', textDecoration: 'none' }}>Join Room →</Link>
-          </div>
+            <p>{room.description}</p>
+            <Link to={`/chat/${room.slug}`}>Join room →</Link>
+          </article>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

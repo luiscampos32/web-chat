@@ -5,24 +5,32 @@ import ExplorePage from './components/ExplorePage';
 import ChatRoom from './components/ChatRoom';
 
 export default function App() {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState('');
 
-  // If no username is set, only show the Landing Page
   if (!username) {
     return <LandingPage setUsername={setUsername} />;
   }
 
   return (
     <Router>
-      <div style={{ padding: '10px', background: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
-        <span>Chatting as: <strong>{username}</strong></span>
-        <button onClick={() => setUsername("")} style={{ cursor: 'pointer' }}>Change Name</button>
+      <div className="app-shell">
+        <header className="topbar glass-panel">
+          <div>
+            Chatting as <strong>@{username}</strong>
+          </div>
+          <button className="ghost-btn" onClick={() => setUsername('')}>
+            Change name
+          </button>
+        </header>
+
+        <main className="page-wrap page-enter">
+          <Routes>
+            <Route path="/" element={<Navigate to="/explore" />} />
+            <Route path="/explore" element={<ExplorePage />} />
+            <Route path="/chat/:roomSlug" element={<ChatRoom username={username} />} />
+          </Routes>
+        </main>
       </div>
-      <Routes>
-        <Route path="/" element={<Navigate to="/explore" />} />
-        <Route path="/explore" element={<ExplorePage />} />
-        <Route path="/chat/:roomSlug" element={<ChatRoom username={username} />} />
-      </Routes>
     </Router>
   );
 }

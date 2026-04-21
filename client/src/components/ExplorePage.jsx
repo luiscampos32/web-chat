@@ -24,11 +24,13 @@ export default function ExplorePage() {
 
       <div className="room-grid">
         {rooms.map((room, index) => (
+          <Link to={`/chat/${room.slug}`} className="ghost-room">
           <article key={room.id} className="room-card glass-panel" style={{ animationDelay: `${index * 80}ms` }}>
             <h3>{room.name}</h3>
             <p>{room.description}</p>
-            <Link to={`/chat/${room.slug}`}>Join room →</Link>
+            <span>Join room →</span>
           </article>
+          </Link>
         ))}
       </div>
     </section>

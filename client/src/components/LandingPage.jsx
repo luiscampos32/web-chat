@@ -14,10 +14,9 @@ export default function LandingPage({ setUsername }) {
     <section className="landing page-enter">
       <div className="landing__orb" aria-hidden="true" />
       <div className="landing__card glass-panel">
-        <p className="landing__eyebrow">Realtime conversations</p>
-        <h1 className="landing__title">DevChat</h1>
+        <h1 className="landing__title">Dev Chat</h1>
         <p className="landing__subtitle">
-          Choose a display name and jump into themed rooms with a neon-inspired UI.
+          Choose a display name and jump in.
         </p>
 
         <form onSubmit={handleSubmit} className="landing__form">
